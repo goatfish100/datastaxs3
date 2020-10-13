@@ -55,6 +55,11 @@ def s3geturl( resourcename):
         return jsonify({'url': url})
     else:
         return jsonify({'error': 'Not Found'})
+
+@app.route('/hello')
+def index():
+    return jsonify({'hello': 'world'})
+
 # Standard code to generate resource in boto3 
 def create_presigned_url(bucket_name, object_name, expiration=3600):
     # Generate a presigned URL for the S3 object
@@ -116,4 +121,4 @@ def create_presigned_post(bucket_name, object_name,
     return response
 # Run app locally - if not using WSGI server (in dev mode)
 if __name__ == "__main__":
-    app.run(host='localhost', port=HTTP_PORT)    
+    app.run(debug=True)    
