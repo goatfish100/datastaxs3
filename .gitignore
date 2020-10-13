@@ -1,0 +1,11 @@
+# Binaries for programs and plugins
+
+# Test binary, built with `go test -c`
+*.test
+
+
+*.env
+*.pyc
+
+# Dependency directories (remove the comment below to include it)
+venv/

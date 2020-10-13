@@ -1,0 +1,8 @@
+{ 
+ "device":"TemperatureSensor", 
+ "value":"20", 
+ "timestamp":"25/01/2017 10:10:05" 
+}
+
+
+'{"device":"TemperatureSensor", "value":"20", "timestamp":"25/01/2017 10:10:05" }'
