@@ -8,8 +8,7 @@ from logging.config import fileConfig
 from os.path import dirname, join
 from unittest.mock import patch
 
-import psycopg2
-import redis
+
 from dotenv import load_dotenv
 from flask import Flask, g
 
@@ -34,20 +33,7 @@ REDIS_DB = os.getenv('REDIS_DB')
 
 app = Flask(__name__)
 
-@patch("psycopg2.connect")
-def connect_db(pg_conn):
-    pg_conn = psycopg2.connect("blahblab")
-    return pg_conn
 
-@patch("redis.Redis")
-def connect_redis(redis_conn):
-    redis_conn =  redis.Redis(host="sdf", port="23333", db="redis")
-    return redis_conn
-
-@app.before_request
-def before_request():
-    g.db = connect_db()
-    g.redis = connect_redis()
 
 class TestHandleCdr(unittest.TestCase):
 
@@ -102,41 +88,4 @@ class TestHandleCdr(unittest.TestCase):
         self.assertTrue(self.cdr.get_progress_mediamsec(jsoncontent_test2), jsoncontent_test2['variables']['progressmsec'])
 
 
-    def test_home_status_code(self):
-        # sends HTTP GET request to the application
-        # on the specified path
-        result = self.app.get('/test') 
-        # assert the status code of the response
-        self.assertEqual(result.status_code, 200) 
-
-    def test_send_inbound_good(self):
-        # sends HTTP GET request to the application
-        # on the specified path
-        result = self.app.post("/data",data=self.datainboundgood, content_type='application/json')
-        # assert the status code of the response
-        self.assertEqual(result.status_code, 200)
-        self.assertEqual(result.data, b'{"SUCCESS": "DATA INSERTED"}')
-
-    def test_send_inbound_bad(self):
-        # sends HTTP GET request to the application
-        # on the specified path
-        result = self.app.post("/data",data=self.datainboundmissing, content_type='application/json')
-        # assert the status code of the response
-        self.assertEqual(result.status_code, 200)
-        self.assertEqual(result.data, b'{"ERROR": "JSON_ERROR"}')
-
-    def test_send_outbound_good(self):
-        # sends HTTP GET request to the application
-        # on the specified path
-        result = self.app.post("/data",data=self.dataoutboundgood, content_type='application/json')
-        # assert the status code of the response
-        self.assertEqual(result.status_code, 200)
-
-
-    def test_send_outbound_bad(self):
-        # sends HTTP GET request to the application
-        # on the specified path
-        result = self.app.post("/data",data=self.dataoutboundmissing, content_type='application/json')
-        # assert the status code of the response
-        self.assertEqual(result.status_code, 200)
-        self.assertEqual(result.data, b'{"ERROR": "JSON_ERROR"}')
+  

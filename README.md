@@ -1,12 +1,13 @@
 # README #
-cdr is a python flask application for the cdr recording web service.
+mainapp is a python flask application with S3 operations per Datastax 
+interview test app.
 
 This project uses Flask http://flask.pocoo.org/ and python 3+ with pip and a virtualenv to run.
 
 To set up and run - create and initialize a python 3+ with virtualenv and run 
 
 In the Virtual Env - install the required libraries with command
-pip install -r ./pip_libs.txt
+pip install -r ./requirements
 
 
 Fallowing standard microservice standards - this project uses a ".env" file to get it's
@@ -14,23 +15,24 @@ variables needed to create.  Since the ".env" file contains sensitive informatio
 database password - it is NOT checked in and needs to be created.
 
 #Information needed in dot env ".env" file
-HTTP_PORT=<YOUR_HTTP_PORT>
-DB_CONN=<DB_CONN_STRING>
-
+This program uses a "dotenv" ".env" for configuration settings.  This
+file IS NOT checked into source control.  to run this program - either
+the environmental variables need to be set OR a correct .env file is in main
+dir.  
 #Sample .env file
-HTTP_PORT="8000"
-DB_CONN="host=localhost dbname=databasename user=postgresuser password=password"
+AWS_ACCESS_KEY= # AWS Key
+AWS_SECRET=  # AWS secret
+AWS_BUCKET=  # bucket
+HTTP_PORT=   # PORT for App to run on
 
-#Running to run - type the following.
-python application.py
+#Running app - dev and test.
+python3 mainapp.py
 
-Note:
-Gevent is currently set as production wsgi server - unless the env DEVELOPMENT is set to "dev" explicity.
 
-It's possible to run in gunicorn as well - benefits/conns aren't fully understood. It is
-believed that gevent is newer/faster and gunicorn is older and more mature.
+#Running app - .
+If you wish to run this app in a production setting - please use
+a wsgi server like gunicorn or Gevent.  This is not described at
+this point in time.
 
-To Run - gunicorn - run with the following options - note - number of
-workers/ip/port are all set as gunicorn command line options
-gunicorn --log-level debug -w 2 -b 127.0.0.1:4009 application_gunicorn:app
+
 
