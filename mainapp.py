@@ -23,8 +23,7 @@ LOGGER = logging.getLogger()
 app = Flask(__name__)
 
 
-@app.route('/s3post')
-@app.route('/s3post/<filename>')
+@app.route('/s3post/<filename>', methods = ['GET', 'POST'])
 def s3post(filename):
     # - demo getting unique resource name - but demo purposes not going full 
     # - uuid
@@ -34,19 +33,19 @@ def s3post(filename):
     data = {'posturl': url, 'uuid': pyuuid}
     return jsonify(data), 200
 
-@app.route('/s3check')
-@app.route('/s3check/<filename>')
+
+@app.route('/s3check/<filename>', methods = ['GET', 'PUT'])
 def s3check( filename):
     LOGGER.info("s3check")
     LOGGER.info(filename)
 
     if check_resource(AWS_BUCKET, filename) == True:
-        return jsonify({'ready': 'True'})
+        return jsonify({'exists': 'True'})
     else:
-        return jsonify({'ready': 'False'})
+        return jsonify({'exists': 'False'})
 
-@app.route('/s3geturl')
-@app.route('/s3geturl/<resourcename>')
+
+@app.route('/s3geturl/<resourcename>',methods = ['GET', 'PUT'])
 def s3geturl( resourcename):
     LOGGER.info("s3geturl")
     LOGGER.info(resourcename)
@@ -95,7 +94,7 @@ def check_resource(bucket_name, object_name, expiration=3600):
 
 
 def create_presigned_post(bucket_name, object_name,
-                          fields=None, conditions=None, expiration=3600):
+                          fields=None, conditions=None, expiration=7200):
 
     # Generate a presigned S3 POST URL
     s3_client = boto3.client('s3', aws_access_key_id=AWS_KEY,aws_secret_access_key=AWS_SECRET)
