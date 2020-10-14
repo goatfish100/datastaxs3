@@ -66,7 +66,11 @@ def create_presigned_url(bucket_name, object_name, expiration=3600):
     if check_resource == False:
         response = jsonify({'error': 'not available'})
         return response
-    s3_client = boto3.client('s3')
+    s3_client = boto3.client(
+                                's3',
+                                aws_access_key_id=AWS_KEY,
+                                aws_secret_access_key=AWS_SECRET
+                            )
     try:
         response = s3_client.generate_presigned_url('get_object',
                                                     Params={'Bucket': bucket_name,
@@ -81,7 +85,11 @@ def create_presigned_url(bucket_name, object_name, expiration=3600):
 # No great way to check if resource has been completed uploaded
 # Could use S3 to send message to message que - but that could take up to a minute
 def check_resource(bucket_name, object_name, expiration=3600):
-    s3_client = boto3.client('s3')
+    s3_client = boto3.client(
+                                's3',
+                                aws_access_key_id=AWS_KEY,
+                                aws_secret_access_key=AWS_SECRET
+                            )
     try:
         s3_client.head_object(Bucket=bucket_name, Key=object_name)
     except ClientError:
@@ -108,11 +116,9 @@ def create_presigned_post(bucket_name, object_name,
     # Generate a presigned S3 POST URL
     s3_client = boto3.client('s3')
     try:
-        response = s3_client.generate_presigned_post(bucket_name,
-                                                     object_name,
-                                                     Fields=fields,
-                                                     Conditions=conditions,
-                                                     ExpiresIn=expiration)
+        response = s3_client.generate_presigned_url( ClientMethod='put_object',
+                                                     Params={'Bucket': AWS_BUCKET, 'Key': object_name},
+                                                     ExpiresIn=3600,)
     except ClientError as e:
         logging.error(e)
         return None
