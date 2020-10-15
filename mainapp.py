@@ -15,12 +15,19 @@ load_dotenv(find_dotenv())
 AWS_KEY = os.getenv('AWS_ACCESS_KEY')
 AWS_SECRET = os.getenv('AWS_SECRET')
 AWS_BUCKET = os.getenv('AWS_BUCKET')
-
+# s3_client
 # Set up the logging
 fileConfig('logging_config.ini')
 LOGGER = logging.getLogger()
 
 app = Flask(__name__)
+
+
+@app.before_first_request
+def init():
+    LOGGER.info("initializing boto3 s3 client")
+    global s3_client 
+    s3_client = boto3.client('s3', aws_access_key_id=AWS_KEY,aws_secret_access_key=AWS_SECRET)
 
 
 @app.route('/s3post/<filename>', methods = ['GET', 'POST'])
@@ -83,7 +90,7 @@ def create_presigned_url(bucket_name, object_name, expiration=3600):
 # No great way to check if resource has been completed uploaded
 # Could use S3 to send message to message que - but that could take up to a minute
 def check_resource(bucket_name, object_name, expiration=3600):
-    s3_client = boto3.client('s3', aws_access_key_id=AWS_KEY,aws_secret_access_key=AWS_SECRET)
+    # s3_client = boto3.client('s3', aws_access_key_id=AWS_KEY,aws_secret_access_key=AWS_SECRET)
 
     try:
         s3_client.head_object(Bucket=bucket_name, Key=object_name)
@@ -97,7 +104,7 @@ def create_presigned_post(bucket_name, object_name,
                           fields=None, conditions=None, expiration=7200):
 
     # Generate a presigned S3 POST URL
-    s3_client = boto3.client('s3', aws_access_key_id=AWS_KEY,aws_secret_access_key=AWS_SECRET)
+    # s3_client = boto3.client('s3', aws_access_key_id=AWS_KEY,aws_secret_access_key=AWS_SECRET)
 
     try:
         response = s3_client.generate_presigned_url( ClientMethod='put_object',
