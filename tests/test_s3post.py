@@ -1,11 +1,17 @@
 import json
 
+
+
+
 # Boto3 library generates signed url locally - it has all key's
 # it needs and does not contact AWS - thus no need to mock/dummy 
 # service
-#A good resource
+
 def test_index(app, client):
-    res = client.get('/s3geturl/jltest')
+    res = client.get('/s3post/jls')
     assert res.status_code == 200
-    assert json.loads(res.get_data(as_text=True))
+    # expected = {'hello': 'world'}
+    print(res.get_data(as_text=True))
+    assert expected == json.loads(res.get_data(as_text=True))
+
 
